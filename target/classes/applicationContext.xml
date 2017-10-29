@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    
+    <bean id="parentTriangle" class="com.zhi.spring.pojo.Triangle">
+    	
+    </bean>
+    <bean id="childTriangle" class="com.zhi.spring.pojo.Triangle" parent="parentTriangle">
+    </bean>
+    
+    <bean id="triangle" class="com.zhi.spring.pojo.Triangle" >
+    	<property name="type" value="Equilateral" />
+    	<!-- <constructor-arg type="int" value="AAA" /> using constructer to define -->
+    </bean>
+    
+    <bean id="triangleWithPoint" class="com.zhi.spring.pojo.Triangle">
+    	<property name="pointA" ref="zeroPoint"></property>
+    	<!-- inner bean -->
+    	<property name="pointB" >
+	   		<bean class="com.zhi.spring.pojo.Point">
+		    	<property name="x" value="-20" />
+		    	<property name="y" value="0" />
+		    </bean>
+    	</property>
+    	<property name="pointC" ref="twoPoint"></property>
+    </bean>
+    
+    <bean id="triangleWithList" class="com.zhi.spring.pojo.Triangle" init-method="myInit" destroy-method="cleanUp">
+    	<property name="points">
+    		<list>
+    			<ref bean="zeroPoint"/>
+    			<ref bean="twoPoint"/>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="triangleWithAutowired" class="com.zhi.spring.pojo.Triangle" autowire="byName">
+    	
+    </bean>
+    
+    <bean id="zeroPoint" class="com.zhi.spring.pojo.Point">
+    	<property name="x" value="${pointA.pointX}" />
+    	<property name="y" value="${pointA.pointY}" />
+    </bean>
+
+    <bean id="twoPoint" class="com.zhi.spring.pojo.Point">
+    	<qualifier value="circleRelated" />
+    	<property name="x" value="0" />
+    	<property name="y" value="200" />
+    </bean>
+    
+   <bean id="center" class="com.zhi.spring.pojo.Point">
+    	<property name="x" value="0" />
+    	<property name="y" value="20" />
+    </bean>
+    
+    <bean id="cycle" class="com.zhi.spring.pojo.Cycle">
+    	<property name="point" ref="twoPoint"></property>
+    </bean>
+    
+    
+    <!-- alias -->    
+    <alias name="triangle" alias="tt"/>
+    
+    <bean class="com.zhi.spring.bean.DisplayNameBeanPostProcessor" />
+    <bean class="com.zhi.spring.bean.DisplayBeanFactoryProcessor" />
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
+    	<property name="locations" value="pointsconfig.properties" />
+    </bean>
+    
+    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"></bean>
+
+	<bean id="square" class="com.zhi.spring.pojo.Square">
+		
+	</bean>
+	
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"></bean>
+	
+	<context:component-scan base-package="com.zhi.spring.pojo" />
+	
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>mymessages</value>
+			</list>
+		</property>
+	</bean>
+</beans>

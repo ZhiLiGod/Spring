@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    
+    <context:annotation-config />
+    <aop:aspectj-autoproxy />
+    
+    <bean id="triangle" class="com.zhi.spring.pojo.NewTriangle">
+    	<property name="name" value="Triangle name"></property>
+    </bean>
+    
+    <bean id="circle" class="com.zhi.spring.pojo.Circle">
+    	<property name="name" value="Circle name"></property>
+    </bean>
+    
+    <bean id="shapeService" class="com.zhi.spring.service.ShapeService" autowire="byName">
+    	
+    </bean>
+    
+    <bean id="loggingAspect" class="com.zhi.spring.logging.LoggingAspect" />
+
+	<aop:config>
+		<aop:aspect id="loggingAspect" ref="loggingAspect" >
+			<aop:pointcut expression="execution(* get*())" id="allGetters" />
+			<aop:around pointcut-ref="allGetters" method="myAroundAdvice"/>
+		</aop:aspect>
+	</aop:config>
+
+</beans>
