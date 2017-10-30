@@ -7,10 +7,9 @@
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
-    
     <context:annotation-config />
     <aop:aspectj-autoproxy />
-    
+    <context:component-scan base-package="com.zhi.spring.dao" />
     <!-- load db.properties -->
 	<context:property-placeholder location="classpath:db.properties" />
 		
@@ -21,29 +20,25 @@
 		<property name="password" value="${jdbc.password}"></property>
     </bean>
     
-    <bean id="jdbcDaoImpl" class="com.zhi.spring.dao.JdbcDaoImpl">
+    <!-- <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean> -->
     
+    <bean id="simpleJdbcDaoImpl" class="com.zhi.spring.dao.SimpleJdbcDaoImpl">
+    	<property name="dataSource", ref="dataSource" />
     </bean>
     
-    <bean id="triangle" class="com.zhi.spring.pojo.NewTriangle">
-    	<property name="name" value="Triangle name"></property>
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    	<property name="dataSource", ref="dataSource" />
+    	<property name="packagesToScan" value="com.zhi.spring.pojo"/>
+    	<property name="hibernateProperties" >
+    		<props>
+    			<prop key="dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+    		</props>
+    	</property>
     </bean>
     
-    <bean id="circle" class="com.zhi.spring.pojo.Circle">
-    	<property name="name" value="Circle name"></property>
-    </bean>
-    
-    <bean id="shapeService" class="com.zhi.spring.service.ShapeService" autowire="byName">
-    	
-    </bean>
-    
-    <bean id="loggingAspect" class="com.zhi.spring.logging.LoggingAspect" />
-
-	<aop:config>
-		<aop:aspect id="loggingAspect" ref="loggingAspect" >
-			<aop:pointcut expression="execution(* get*())" id="allGetters" />
-			<aop:around pointcut-ref="allGetters" method="myAroundAdvice"/>
-		</aop:aspect>
-	</aop:config>
-
 </beans>
